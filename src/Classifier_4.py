@@ -2,7 +2,7 @@
 # Courtesy of https://colab.research.google.com/drive/1jrKpcF6AVCh1M6_2aW9j-QpWnzOZh_mh?usp=sharing#scrollTo=6APZIZ6hyJYk
 
 import torch
-from torch import nn, sigmoid, softmax
+from torch import nn
 from torch.utils.data import DataLoader
 from torchvision import datasets
 from torchvision.transforms import ToTensor, Lambda, Compose
@@ -31,13 +31,10 @@ def main():
         transform=ToTensor(),
     )
 
-
-  
-
     # Get cpu or gpu device for training.
     
     global device
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+    device = "ane" if torch.cuda.is_available() else "cpu"
     print("Using {} device".format(device))
     loss_values = []
     acc_values = []
@@ -47,17 +44,17 @@ def main():
 
 
     loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     
     Run(model,loss_fn,optimizer)
     
     print('Pytorch Output...')
     print('Done!')
-        
+    
     fn = input("Please enter a filepath:\n>")
-        
+    
     while fn != 'exit':
-            
+        
         img = Image.open(fn)
         # Define a transform to convert PIL 
         # image to a Torch tensor
@@ -66,13 +63,12 @@ def main():
         pred = model(tensor)
         print(f'Classifier : {pred.argmax()}')
         fn = input("Please enter a filepath:\n>")
-            
         
+
 def Run(model,cost,opt):
     """
     Trains the models, and also auto detects when to stop i.e the number of epochs 
     """
-    
     train_loss = []
     validation_acc = []
     best_model = None
@@ -82,12 +78,11 @@ def Run(model,cost,opt):
     no_improvement = 5
     batch_size = 512
 
-    
     for n_epoch in range(max_epoch):
         model.train()
         loader = data.DataLoader(training_data, batch_size=batch_size, shuffle=True, num_workers=1)
         epoch_loss = []
-        # traing loop
+        
         for X_batch, y_batch in loader:
             opt.zero_grad()
             logits = model(X_batch)
@@ -95,10 +90,10 @@ def Run(model,cost,opt):
             loss.backward()
             opt.step()        
             epoch_loss.append(loss.detach())
+            
+            
         train_loss.append(torch.tensor(epoch_loss).mean())
         model.eval()
-        
-        # Validating the model 
         loader = data.DataLoader(test_data, batch_size=len(test_data), shuffle=False)
         X, y = next(iter(loader))
         logits = model(X)
@@ -114,14 +109,8 @@ def Run(model,cost,opt):
         if best_epoch + no_improvement <= n_epoch:
             print("No improvement for", no_improvement, "epochs")
             break
+            
     model.load_state_dict(best_model)
-    
-    
-    plt.title("Accuracy on the validation set")
-    plt.plot(validation_acc)
-   # plt.show()
-
-    
 
 
 
@@ -143,13 +132,13 @@ class NeuralNetwork(nn.Module):
         self.flatten = nn.Flatten() # covert the 2D array to a 1D 784 size
         self.linear_relu_stack = nn.Sequential(
             nn.Linear(28*28, 512), # input-to-hiden layer 1
-            nn.Sigmoid(),
+            nn.PReLU(),
+    
+            nn.Linear(512,64),
+            nn.PReLU(),
             
-            nn.Linear(512,128),
-            nn.Sigmoid(),
-            
-            nn.Linear(128,10),
-            #nn.Soft(dim =1 )
+            nn.Linear(64, 10),
+            #nn.Softmax(dim=1)
          
         )
 
@@ -159,4 +148,5 @@ class NeuralNetwork(nn.Module):
         return logits
 if __name__ == '__main__':
     main()
-    print("Exiting...")
+    print('Exiting...')
+        

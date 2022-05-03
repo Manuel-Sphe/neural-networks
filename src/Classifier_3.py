@@ -39,18 +39,17 @@ def main():
     global device
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print("Using {} device".format(device))
-    loss_values = []
-    acc_values = []
+  
     
     
     model = NeuralNetwork().to(device)
 
 
     loss_fn = nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
+    optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
     
     Run(model,loss_fn,optimizer)
-    
+        
     print('Pytorch Output...')
     print('Done!')
         
@@ -66,7 +65,7 @@ def main():
         pred = model(tensor)
         print(f'Classifier : {pred.argmax()}')
         fn = input("Please enter a filepath:\n>")
-            
+        
         
 def Run(model,cost,opt):
     """
@@ -119,7 +118,7 @@ def Run(model,cost,opt):
     
     plt.title("Accuracy on the validation set")
     plt.plot(validation_acc)
-   # plt.show()
+    plt.show()
 
     
 
@@ -142,13 +141,13 @@ class NeuralNetwork(nn.Module):
         super(NeuralNetwork, self).__init__()
         self.flatten = nn.Flatten() # covert the 2D array to a 1D 784 size
         self.linear_relu_stack = nn.Sequential(
-            nn.Linear(28*28, 512), # input-to-hiden layer 1
-            nn.Sigmoid(),
+            nn.Linear(28*28, 256), # input-to-hiden layer 1
+            nn.ReLU(),
             
-            nn.Linear(512,128),
-            nn.Sigmoid(),
+            nn.Linear(256,64),
+            nn.ReLU(),
             
-            nn.Linear(128,10),
+            nn.Linear(64,10),
             #nn.Soft(dim =1 )
          
         )
@@ -159,4 +158,3 @@ class NeuralNetwork(nn.Module):
         return logits
 if __name__ == '__main__':
     main()
-    print("Exiting...")
