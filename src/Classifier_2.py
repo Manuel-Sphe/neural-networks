@@ -118,11 +118,9 @@ def Run(model,cost,opt):
     
     plt.title("Accuracy on the validation set")
     plt.plot(validation_acc)
-    plt.show()
+    #plt.show()
 
-    print(train_loss)
-    print(validation_acc)
-
+    
 
 
 
