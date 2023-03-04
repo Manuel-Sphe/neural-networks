@@ -1,4 +1,5 @@
 # ANNs for Image Classification
+![image](https://i0.wp.com/bdtechtalks.com/wp-content/uploads/2018/12/artificial-intelligence-deep-learning-neural-networks-ai.jpg?w=1392&ssl=1)
 
 In this Assignment, you are tasked with designing ANNs that can classify handwritten digits from the MNIST10 dataset. You are allowed to use `Pytorch` for this Assignment. You will also be asked to write a report detailing the designs of your ANNs
 
